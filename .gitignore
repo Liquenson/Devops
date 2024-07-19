@@ -1,0 +1,1 @@
+docker build -t liquensonruben/ubuntu:v1.1.1 .
