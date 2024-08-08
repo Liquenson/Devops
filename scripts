@@ -1,0 +1,14 @@
+#!/bin/bash
+
+REPOSITORY=""
+TAG=""
+
+IMAGE_NAME=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "${REPOSITORY}:${TAG}")
+
+if [ -z "$IMAGE_NAME" ]; then
+  echo "Imagen no encontrada."
+else
+  echo "Nombre de la imagen: $IMAGE_NAME"
+
+fi
+
