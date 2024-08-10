@@ -1,31 +1,35 @@
-# Utilizar una imagen base oficial de Ubuntu más ligera
-FROM ubuntu:22.04
+FROM ubuntu:20.04
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+LABEL maintainer="kelvinosaigbovo112@gmail.com"
 
-# Añadir metadatos de la imagen
-LABEL maintainer="Liquenson Ruben"
-LABEL team="DevOps"
-
-# Instalar paquetes necesarios y limpiar archivos temporales
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+    apt-transport-https \
+    apt-utils \
+    ca-certificates \
+    curl \
     git \
+    iputils-ping \
     jq \
     unzip \
-    wget \
-    apache2 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Descargar, descomprimir y mover los archivos del template a la carpeta de Apache en un solo paso
-RUN wget -qO- https://www.free-css.com/assets/files/free-css-templates/download/page296/carvilla.zip | \
-    bsdtar -xvf- -C /tmp && \
-    mv /tmp/carvilla/* /var/www/html/ && \
-    rm -rf /tmp/carvilla
-
-# Crear el directorio de trabajo y establecerlo como el directorio actual
-WORKDIR /pochi2
-
-# Exponer el puerto 80 para el servidor web
-EXPOSE 80
-
-# Comando para iniciar Apache en primer plano
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+    lsb-release \
+    software-properties-common \
+    libicu66
+USER root
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+ARG Azcopy_version=v10
+RUN mkdir -p /opt/hostedtoocache/azcopy/v10 \
+    && cd /opt/hostedtoocache/azcopy/v10 \
+    && curl -L https://aka.ms/downloadazcopy-${Azcopy_version}-linux | tar --strip-components=1 --exclude=*.txt -xzvf - \
+    && rm -rf azcopy_v10.tar.gz \
+    && chmod +x azcopy
+VOLUME /class/version/azcopy
+RUN apt-get install apache2 -y 
+RUN mkdir /mcpatral
+EXPOSE 90
+COPY class1 /mcpatral
+WORKDIR /caro
+# Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
+ENV TARGETARCH=linux-x64 
+ENV MCPATRAL=Devops
+ENV AZCOPY=V10
