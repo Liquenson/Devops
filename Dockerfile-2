@@ -1,0 +1,33 @@
+# Usa una imagen base diferente, por ejemplo, Debian
+FROM debian:bookworm-slim
+
+# Etiquetas del mantenedor
+LABEL maintainer="Liquenson Ruben"
+LABEL Team="DevOps"
+
+# Instala paquetes necesarios, descarga y extrae el template, luego limpia
+RUN apt-get update -y && \
+    apt-get install -y \
+    curl \
+    unzip \
+    nginx \
+    sudo && \
+    curl -L https://github.com/username/sample-website/archive/refs/heads/main.zip -o sample-website.zip && \
+    unzip sample-website.zip -d /usr/share/nginx/html && \
+    rm sample-website.zip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Crea y configura un usuario no root
+RUN useradd -ms /bin/bash appuser && \
+    mkdir -p /home/appuser/website && \
+    chown -R appuser:appuser /home/appuser
+
+USER appuser
+WORKDIR /home/appuser/website
+
+# Expone el puerto 80
+EXPOSE 80
+
+# Configura el comando de inicio para nginx
+CMD ["nginx", "-g", "daemon off;"]
